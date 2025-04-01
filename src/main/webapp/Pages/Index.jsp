@@ -24,6 +24,7 @@
             animation: fadeInDown 1s ease;
         }
 
+
         nav ul {
             list-style: none;
             padding: 0;
