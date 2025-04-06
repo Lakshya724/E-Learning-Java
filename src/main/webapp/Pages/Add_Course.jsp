@@ -1,183 +1,162 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <html>
 <head>
     <title>Add Course - Admin Panel</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
             display: flex;
-            background-color: #f4f6f9;
+            background-color: #eef3f7;
         }
-
-        /* Sidebar already included in Sidebar.jsp */
-
-        /* Main Content */
         .main-content {
-            margin-left: 500px; /* Ensures content is placed beside sidebar */
+            margin-left: 270px;
             padding: 30px;
             width: calc(100% - 270px);
         }
-
-        .header {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        /* Add Course Form */
         .form-container {
             background: #fff;
-            padding: 25px;
-            border-radius: 8px;
+            padding: 30px;
+            border-radius: 10px;
             width: 60%;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
-            border-left: 4px solid #007bff;
+            margin: auto;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #007bff;
         }
-
         .form-container h2 {
             text-align: center;
-            font-weight: 600;
-            font-size: 22px;
-            margin-bottom: 15px;
-            color: #333;
+            color: #007bff;
+            margin-bottom: 25px;
         }
-
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
-
         .form-group label {
+            font-weight: 600;
             display: block;
-            font-weight: 500;
-            font-size: 16px;
             margin-bottom: 5px;
         }
-
-        .form-group input, .form-group textarea {
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 12px;
             border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 6px;
+            font-size: 15px;
         }
-
-        /* Upload Image */
         .upload-container {
             display: flex;
             justify-content: center;
-            align-items: center;
-            margin-top: 15px;
+            margin-bottom: 15px;
         }
-
         .upload-box {
             border: 2px dashed #007bff;
-            padding: 20px;
+            padding: 25px;
             text-align: center;
+            background: #f1f9ff;
+            width: 260px;
+            border-radius: 8px;
             cursor: pointer;
-            border-radius: 5px;
-            background: #f1f1f1;
-            width: 220px;
-            transition: 0.3s;
+            position: relative;
         }
-
-        .upload-box:hover {
-            background: #d9e4fc;
-        }
-
         .upload-box i {
             font-size: 40px;
             color: #007bff;
         }
-
-        /* Submit Button */
-        .submit-btn {
-            display: block;
+        .upload-box input[type="file"] {
+            opacity: 0;
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
             width: 100%;
-            padding: 12px;
-            border: none;
+            cursor: pointer;
+        }
+        .file-name {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
             background-color: #007bff;
             color: white;
-            font-size: 18px;
+            font-size: 17px;
             font-weight: bold;
-            text-align: center;
-            border-radius: 5px;
+            border: none;
+            border-radius: 6px;
             cursor: pointer;
-            margin-top: 20px;
-            transition: 0.3s;
+            transition: background-color 0.3s;
         }
-
         .submit-btn:hover {
             background-color: #0056b3;
         }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-content {
-                margin-left: 200px;
-                width: calc(100% - 200px);
-            }
-            .form-container {
-                width: 80%;
-            }
-        }
-
-        @media (max-width: 500px) {
-            .main-content {
-                margin-left: 100px;
-                width: calc(100% - 100px);
-            }
-            .form-container {
-                width: 90%;
-            }
-        }
-
     </style>
 </head>
 <body>
+<jsp:include page="Sac.jsp"/>
 
-  <jsp:include page="Sac.jsp"/>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="form-container">
-            <h2>Add Course</h2>
-            <form action="add_course.jsp" method="post">
-                <div class="form-group">
-                    <label>Course Name</label>
-                    <input type="text" name="course_name" required>
-                </div>
-                <div class="form-group">
-                    <label>Prof. Name</label>
-                    <input type="text" name="prof_name" required>
-                </div>
-                <div class="form-group">
-                    <label>Category</label>
-                    <input type="text" name="category" required>
-                </div>
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea name="description" rows="4" required></textarea>
-                </div>
-
-                <!-- Upload Image -->
-                <div class="upload-container">
-                    <label class="upload-box">
-                        <i class="fa fa-upload"></i>
-                        <p>Upload Image</p>
-                        <input type="file" name="course_image" accept="image/*" style="display: none;">
-                    </label>
-                </div>
-
-                <!-- Submit Button -->
-                <button type="submit" class="submit-btn">Add</button>
-            </form>
-        </div>
+<div class="main-content">
+    <div class="form-container">
+        <h2>Add Course</h2>
+        <form action="<%=request.getContextPath() %>/AddCourseServlet" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>Course Name</label>
+                <input type="text" name="course_name" required>
+            </div>
+            <div class="form-group">
+                <label>Prof. Name</label>
+                <input type="text" name="prof_name" required>
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select name="category" required>
+                    <option value="">-- Select Category --</option>
+                    <option value="All">All</option>
+                    <option value="Web">Web</option>
+                    <option value="Mobile">Mobile</option>
+                    <option value="DataScience">DataScience</option>
+                    <option value="AIML">AIML</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" rows="4" required></textarea>
+            </div>
+            <div class="upload-container">
+                <label class="upload-box">
+                    <i class="fa fa-upload"></i>
+                    <p>Upload Image</p>
+                    <input type="file" name="course_image" accept="image/*" onchange="showFileName(this)" required>
+                    <div class="file-name" id="fileName">No file chosen</div>
+                </label>
+            </div>
+            <button type="submit" class="submit-btn">Add</button>
+        </form>
     </div>
+</div>
+
+<%-- Success message popup if 'success' attribute exists --%>
+<%
+    String success = (String) request.getAttribute("success");
+    if ("true".equals(success)) {
+%>
+<script>
+    alert("Course added successfully!");
+</script>
+<%
+    }
+%>
+
+<script>
+function showFileName(input) {
+    const fileName = input.files[0] ? input.files[0].name : "No file chosen";
+    document.getElementById("fileName").innerText = fileName;
+}
+</script>
 
 </body>
 </html>

@@ -180,7 +180,7 @@
                     <i class="fa-solid fa-eye-slash"></i>
                 </span>
             </div>
-            <a href="Forget_Password.jsp" class="forgot-password">Forgot Password?</a>
+            <a href="ForgotPassword.jsp" class="forgot-password">Forgot Password?</a>
             <button type="submit">Sign In</button>
         </form>
         

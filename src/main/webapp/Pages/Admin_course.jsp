@@ -1,129 +1,75 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Course List - Admin Panel</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Course List</title>
     <style>
         body {
-            margin: 0;
             font-family: 'Poppins', sans-serif;
-            background-color: #f4f6f9;
+            background: #f4f6f9;
         }
 
-        /* Flex Container */
         .container {
-            display: flex;
-            min-height: 100vh;
+    margin: 40px 20px 40px 300px; /* Left margin added to avoid sidebar overlap */
+    width: calc(100% - 340px); /* Adjust width so it fits with sidebar */
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    background-color: white;
+    padding: 20px;
+}
+
+
+        h2 {
+            text-align: center;
+            color: #222;
         }
 
-        /* Sidebar */
-        .sidebar {
-            width: 270px;
-            background: #343a40;
-            color: white;
-            padding: 20px;
-            position: fixed;
-            height: 100vh;
-            left: 0;
-            top: 0;
-        }
-
-        /* Main Content */
-        .main-content {
-            margin-left: 300px; /* Adjusted margin */
-            padding: 30px;
-            flex-grow: 1;
-        }
-
-        .header {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        /* Course Grid */
-        .course-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-
-        /* Course Card */
-        .course-card {
-            background: #fff;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease;
-        }
-
-        .course-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .course-card img {
+        table {
             width: 100%;
-            height: 180px;
-            object-fit: cover;
+            border-collapse: collapse;
+            margin-top: 25px;
         }
 
-        .course-content {
+        th, td {
             padding: 15px;
-            background: #dde5fa;
+            text-align: center;
         }
 
-        .course-content h3 {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .course-content p {
-            font-size: 14px;
-            color: #555;
-            margin-bottom: 10px;
-        }
-
-        .course-content .skills {
-            font-weight: bold;
+        th {
+            background-color: #cfe2ff;
             color: #000;
         }
 
-        .view-btn {
-            display: block;
-            text-align: center;
-            background: #007bff;
-            color: white;
-            padding: 10px;
-            font-size: 16px;
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 8px 16px;
             font-weight: bold;
+            border: none;
             border-radius: 5px;
-            text-decoration: none;
-            margin-top: 10px;
-            transition: 0.3s;
+            cursor: pointer;
         }
 
-        .view-btn:hover {
-            background: #0056b3;
+        .edit-btn {
+            background-color: #343a40;
+            color: white;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-content {
-                margin-left: 270px; /* Adjust for smaller screens */
-            }
+        .delete-btn {
+            background-color: red;
+            color: white;
         }
 
-        @media (max-width: 500px) {
-            .main-content {
-                margin-left: 0; /* Full width on small screens */
-            }
+        .edit-btn:hover {
+            background-color: #23272b;
         }
 
+        .delete-btn:hover {
+            background-color: darkred;
+        }
     </style>
 </head>
 <body>
@@ -133,92 +79,62 @@
     <jsp:include page="Sl.jsp"/>
 </div>
 
-<!-- Main Content -->
-<div class="main-content">
-    <h2 class="header">Course List</h2>
+<div class="container">
+    <h2>Course List</h2>
 
-    <div class="course-grid">
-        <!-- Course 1 -->
-        <div class="course-card">
-            <img src="Images/img8.png" alt="Flutter Course">
-            <div class="course-content">
-                <h3>Introduction to Mobile App Development</h3>
-                <p><span class="skills">Skills you'll gain:</span> Mobile Development, Android Studio, Flutter...</p>
-                <a href="Admin_view.jsp" class="view-btn">View</a>
-            </div>
-        </div>
+    <table border="1">
+        <tr>
+            <th>Course Id</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Prof. Name</th>
+            <th>Actions</th>
+        </tr>
 
-        <!-- Course 2 -->
-        <div class="course-card">
-            <img src="Images/img11.png" alt="Android Course">
-            <div class="course-content">
-                <h3>Introduction to Mobile App Development</h3>
-                <p><span class="skills">Skills you'll gain:</span> Android Studio, Application Development...</p>
-              <a href="Admin_view.jsp" class="view-btn">View</a>
-            </div>
-        </div>
+        <%
+            Connection conn = null;
+            PreparedStatement ps = null;
+            ResultSet rs = null;
 
-        <!-- Course 3 -->
-        <div class="course-card">
-            <img src="Images/img24.png" alt="SQL Course">
-            <div class="course-content">
-                <h3>Introduction to SQL</h3>
-                <p><span class="skills">Skills you'll gain:</span> SQL Queries, Database Management...</p>
-               <a href="Admin_view.jsp" class="view-btn">View</a>
-            </div>
-        </div>
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/skill_Elevate", "root", "");
+                ps = conn.prepareStatement("SELECT * FROM Courses");
+                rs = ps.executeQuery();
 
-        <!-- Course 4 -->
-        <div class="course-card">
-            <img src="Images/img17.png" alt="ChatGPT Course">
-            <div class="course-content">
-                <h3>Introduction to ChatGPT</h3>
-                <p><span class="skills">Skills you'll gain:</span> AI, Chatbots, NLP...</p>
-             <a href="Admin_view.jsp" class="view-btn">View</a>
-            </div>
-        </div>
-
-        <!-- Course 5 -->
-        <div class="course-card">
-            <img src="Images/img19.png" alt="Excel Course">
-            <div class="course-content">
-                <h3>Introduction to Excel</h3>
-                <p><span class="skills">Skills you'll gain:</span> Data Analysis, Excel Formulas...</p>
-               <a href="Admin_view.jsp" class="view-btn">View</a>
-        </div>
-        </div>
-
-        <!-- Course 6 -->
-        <div class="course-card">
-            <img src="Images/img6.png" alt="React Native Course">
-            <div class="course-content">
-                <h3>Introduction to Mobile App Development</h3>
-                <p><span class="skills">Skills you'll gain:</span> React Native, Mobile Development...</p>
-                <a href="#" class="view-btn">View</a>
-            </div>
-        </div>
-          <!-- Course 5 -->
-        <div class="course-card">
-            <img src="Images/img5.png" alt="Excel Course">
-            <div class="course-content">
-                <h3>Introduction to Excel</h3>
-                <p><span class="skills">Skills you'll gain:</span> Data Analysis, Excel Formulas...</p>
-               <a href="Admin_view.jsp" class="view-btn">View</a>
-            </div>
-        </div>
-
-        <!-- Course 6 -->
-        <div class="course-card">
-            <img src="Images/img20.jpg" alt="React Native Course">
-            <div class="course-content">
-                <h3>Introduction to Mobile App Development</h3>
-                <p><span class="skills">Skills you'll gain:</span> React Native, Mobile Development...</p>
-                <a href="#" class="view-btn">View</a>
-            </div>
-        </div>
-        
-    </div>
-
+                while (rs.next()) {
+                    int id = rs.getInt("course_id");
+                    String title = rs.getString("course_name");
+                    String category = rs.getString("category");
+                    String profName = rs.getString("professor_name");
+        %>
+        <tr>
+            <td><%=id%></td>
+            <td><%=title%></td>
+            <td><%=category%></td>
+            <td><%=profName%></td>
+            <td>
+                <form action="Edit_Course.jsp" method="get" style="display:inline;">
+                    <input type="hidden" name="id" value="<%=id%>">
+                    <button type="submit" class="edit-btn">Edit</button>
+                </form>
+                <form action="DeleteCourse.jsp" method="post" style="display:inline;">
+                    <input type="hidden" name="id" value="<%=id%>">
+                    <button type="submit" class="delete-btn">Remove</button>
+                </form>
+            </td>
+        </tr>
+        <%
+                }
+            } catch (Exception e) {
+                out.println("<tr><td colspan='5'>Error: " + e.getMessage() + "</td></tr>");
+            } finally {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+                if (conn != null) conn.close();
+            }
+        %>
+    </table>
 </div>
 
 </body>

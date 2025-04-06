@@ -199,7 +199,7 @@
             <button class="edit-profile-btn">Edit Profile</button>
         </div>
         <a href="admin_dashboard.jsp" class="active">Dashboard</a>
-        <a href="Admin_course.jsp">My Course</a>
+        <a href="Admin_course.jsp">Course List</a>
         <a href="Add_Course.jsp">Add Course</a>
         <a href="user_management.jsp">User Management</a>
         <a href="settings.jsp">Settings</a>

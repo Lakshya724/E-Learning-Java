@@ -1,10 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*, java.util.*" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skill_Elevate - Courses</title>
+    <title>Skill_Elevate - Data Science Courses</title>
     <style>
         * {
             margin: 0;
@@ -12,59 +12,42 @@
             box-sizing: border-box;
             font-family: Arial, sans-serif;
         }
-
         body {
             background-color: #f8f8e8;
             text-align: center;
-            padding-top:50px;
-       
+            padding-top: 50px;
         }
-
         .hero {
             width: 100%;
-		    height: 400px; /* Adjust based on requirement */
-		    background-image: url('Images/Data.png'); /* Update the correct path */
-		    background-size: cover;
-		    background-position: center;
-		    
+            height: 400px;
+            background-image: url('Images/select_2.webp');
+            background-size: cover;
+            background-position: center;
         }
-        .hero img {
-		    width: 100%;
-		    height: auto;
-		    display: block;
-}
-        
-        
         .tagline {
             font-size: 18px;
             font-weight: bold;
             color: #8b8b8b;
             margin: 10px 0;
         }
-
         .tagline span {
             color: red;
         }
-
         .course-title {
-             font-size: 22px;
-    font-weight: bold;
-    margin: 20px 0;
-    display: block; /* Ensures it takes its own line */
-    text-align: left; /* Aligns it properly */
-    padding-left: 20px; /* Adjust as needed */
-    clear: both; /* P
-    revents floating elements from interfering */
-    margin-left:40px;
+            font-size: 22px;
+            font-weight: bold;
+            margin: 20px 0;
+            display: block;
+            text-align: left;
+            padding-left: 20px;
+            margin-left: 40px;
         }
-
         .categories {
             display: flex;
             justify-content: center;
             gap: 15px;
             margin-bottom: 20px;
         }
-
         .category {
             background-color: #a3c5ff;
             padding: 15px 30px;
@@ -72,14 +55,12 @@
             font-weight: bold;
             cursor: pointer;
         }
-
         .course-grid {
             display: flex;
             justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
         }
-
         .course-card {
             background-color: #c1d3ff;
             border-radius: 10px;
@@ -88,28 +69,19 @@
             text-align: center;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-
         .course-card img {
             width: 100%;
             height: 140px;
             border-radius: 10px;
         }
-
         .course-card h3 {
             font-size: 16px;
             margin: 8px 0;
         }
-
         .course-card p {
             font-size: 14px;
             color: #444;
         }
-
-        .rating {
-            font-size: 16px;
-            font-weight: bold;
-        }
-
         .free-badge {
             display: inline-block;
             background-color: blue;
@@ -123,83 +95,91 @@
 </head>
 <body>
 
-<jsp:include page="Navbar.jsp"></jsp:include>
+<jsp:include page="Navbar.jsp" />
 
-    <div class="hero"></div>
-    <p class="tagline">India's Most Loved Coding Community <span>❤️</span></p>
+<div class="hero"></div>
+<p class="tagline">India's Most Loved Coding Community <span>❤️</span></p>
 
-    <h2 class="course-title">All the skills  related to Data Science....</h2>
-    <div class="categories">
- 		<div class="category">EXCEL</div>
-        <div class="category">POWER BI</div>
-        <div class="category">PYTHON</div>
-        <div class="category">SQL</div>
-         
-    </div>
-     <div class="course-grid">
+<h2 class="course-title">All the skills related to Data Science....</h2>
 
+<div class="categories">
+    <div class="category">Python</div>
+    <div class="category">Pandas</div>
+    <div class="category">Machine Learning</div>
+    <div class="category">Deep Learning</div>
+</div>
+
+<!-- DYNAMIC COURSE GRID -->
+<div class="course-grid">
+<%
+    Connection conn = null;
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    try {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/skill_elevate", "root", "");
+
+        String sql = "SELECT * FROM Courses WHERE category = ?";
+        stmt = conn.prepareStatement(sql);
+        stmt.setString(1, "Data Science");
+
+        rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            String imagePath = rs.getString("image_path");
+            String courseName = rs.getString("course_name");
+            String professor = rs.getString("professor_name");
+            int courseId = rs.getInt("course_id");
+%>
     <div class="course-card">
-    <img src="Images/img19.png" alt="Course Image">
-    <h3>Introduction to Mobile App Development & more</h3>
-    <p><b>Prof. Neha Chauhan</b></p>
-    <br>
-    <a href="course-details.jsp" class="free-badge-link">
-        <span class="free-badge">Free Learning</span>
-    </a>
+        <img src="<%= request.getContextPath() + "/" + imagePath %>" alt="Course Image">
+        <h3><%= courseName %></h3>
+        <p><b><%= professor %></b></p>
+        <br>
+        <a href="course-details.jsp?course_id=<%= courseId %>" class="free-badge-link">
+            <span class="free-badge">Free Learning</span>
+        </a>
+    </div>
+<%
+        }
+    } catch (Exception e) {
+        out.println("<p style='color:red;'>Error loading courses: " + e.getMessage() + "</p>");
+        e.printStackTrace();
+    } finally {
+        if (rs != null) try { rs.close(); } catch (Exception ignored) {}
+        if (stmt != null) try { stmt.close(); } catch (Exception ignored) {}
+        if (conn != null) try { conn.close(); } catch (Exception ignored) {}
+    }
+%>
 </div>
 
-<div class="course-card">
-    <img src="Images/img20.jpg" alt="Course Image">
-    <h3>Introduction to Mobile App Development & more</h3>
-    <p><b>Prof. Neha Chauhan</b></p>
-    <br>
-    <a href="course-details.jsp" class="free-badge-link">
-        <span class="free-badge">Free Learning</span>
-    </a>
-</div>
+<jsp:include page="learners.jsp" />
+<jsp:include page="Footer.jsp" />
 
-<div class="course-card">
-    <img src="Images/img21.png" alt="Course Image">
-    <h3>Introduction to Mobile App Development & more</h3>
-    <p><b>Prof. Neha Chauhan</b></p>
-    <br>
-    <a href="course-details.jsp" class="free-badge-link">
-        <span class="free-badge">Free Learning</span>
-    </a>
-</div>
+<script>
+function searchCourses() {
+    let input = document.getElementById("navbarSearch").value.toLowerCase();
+    let courses = document.getElementsByClassName("course-card");
 
-<div class="course-card">
-    <img src="Images/img13.png" alt="Course Image">
-    <h3>Introduction to Mobile App Development & more</h3>
-    <p><b>Prof. Snehal Sathwara</b></p>
-    <br>
-    <a href="course-details.jsp" class="free-badge-link">
-        <span class="free-badge">Free Learning</span>
-    </a>
-</div>
+    for (let i = 0; i < courses.length; i++) {
+        let title = courses[i].getElementsByTagName("h3")[0].innerText.toLowerCase();
+        courses[i].style.display = title.includes(input) ? "block" : "none";
+    }
+}
 
-<div class="course-card">
-    <img src="Images/img23.png" alt="Course Image">
-    <h3>Introduction to Mobile App Development & more</h3>
-    <p><b>Prof. Snehal Sathwara</b></p>
-    <br>
-    <a href="course-details.jsp" class="free-badge-link">
-        <span class="free-badge">Free Learning</span>
-    </a>
-</div>
+function toggleDropdown() {
+    let dropdownMenu = document.getElementById("dropdownMenu");
+    dropdownMenu.style.display = (dropdownMenu.style.display === "block") ? "none" : "block";
+}
 
-<div class="course-card">
-    <img src="Images/img24.png" alt="Course Image">
-    <h3>Introduction to Mobile App Development & more</h3>
-    <p><b>Prof. Snehal Sathwara</b></p>
-    <br>
-    <a href="course-details.jsp" class="free-badge-link">
-        <span class="free-badge">Free Learning</span>
-    </a>
-</div>
-</div>
+window.onclick = function(event) {
+    let dropdownMenu = document.getElementById("dropdownMenu");
+    let dropdownContainer = document.getElementById("dropdownContainer");
+    if (!dropdownContainer.contains(event.target)) {
+        dropdownMenu.style.display = "none";
+    }
+};
+</script>
 
-<jsp:include page="learners.jsp"/>
-<jsp:include page="Footer.jsp"/>
 </body>
 </html>

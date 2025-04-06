@@ -244,8 +244,8 @@
             String user = (String) session.getAttribute("username");
             if (user != null) { 
         %>
-            <a href="Profile.jsp">My Profile</a> <!-- ✅ Profile link -->
-            <a href="ChangePassword.jsp" class="change-password">Change Password</a> <!-- ✅ Change Password link -->
+            <a href="Profile.jsp">My Profile</a>
+            <a href="ChangePassword.jsp" class="change-password">Change Password</a> 
             <form action="<%=request.getContextPath()%>/LogoutServlet" method="POST">
                 <button type="submit" class="logout-button">Logout</button>
             </form>

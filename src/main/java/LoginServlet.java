@@ -51,7 +51,7 @@ public class LoginServlet extends HttpServlet {
 					// ✅ Session Set
 					HttpSession session = request.getSession();
 					session.setAttribute("username", email);
-					session.setMaxInactiveInterval(1 * 60); // 30 min session timeout
+					session.setMaxInactiveInterval(15 * 60); // 30 min session timeout
 
 					// ✅ Cookie Set
 					Cookie userCookie = new Cookie("user", email);

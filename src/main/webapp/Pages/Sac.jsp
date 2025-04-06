@@ -165,7 +165,7 @@
 
         <!-- Sidebar Menu -->
         <a href="admin_dashboard.jsp">Dashboard</a>
-        <a href="Admin_course.jsp" >My Course</a>
+        <a href="Admin_course.jsp" >Course List</a>
         <a href="Add_Course.jsp" class="active">Add Course</a>
         <a href="user_management.jsp">User Management</a>
         <a href="#">Settings</a>

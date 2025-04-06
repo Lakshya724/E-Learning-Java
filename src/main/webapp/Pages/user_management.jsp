@@ -1,11 +1,12 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.sql.*" %>
 <!DOCTYPE html>
 <html>
 <head>
     <title>User Management</title>
     <style>
         body {
-            font-family: 'Black Chancery', cursive;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             background: linear-gradient(to right, #ff7e5f, #feb47b);
             color: #333;
@@ -13,7 +14,6 @@
             min-height: 100vh;
         }
 
-       
         .content {
             flex: 1;
             margin-left: 250px;
@@ -62,6 +62,33 @@
             background-color: #e0e0e0;
         }
 
+        .action-buttons button {
+            margin-right: 5px;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 5px;
+        }
+
+        .edit-btn {
+            background-color: #ffc107;
+            color: #fff;
+        }
+
+        .edit-btn:hover {
+            background-color: #e0a800;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
         .add-user {
             margin-top: 20px;
             padding: 12px 25px;
@@ -83,52 +110,113 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
-        /* Profile Section */
-        .profile-section {
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 10px;
+        /* Form Heading */
+        .form-popup h2 {
+            margin-bottom: 15px;
+            font-size: 22px;
+            color: #ff6f61;
         }
 
-        .profile-section img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 3px solid #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 10px;
-            object-fit: cover;
+
+     
+	.form-popup {
+	    display: none;
+	    position: fixed;
+	    top: 50%;
+	    left: 50%;
+	    transform: translate(-50%, -50%);
+	    width: 400px; 
+	    padding: 40px;
+	    background: rgba(255, 255, 255, 0.95);
+	    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+	    border-radius: 10px;
+	    backdrop-filter: blur(10px);
+	    text-align: center;
+	}
+	
+	
+	.form-popup input {
+	    width: 100%;
+	    padding: 14px; 
+	    margin-bottom: 16px; 
+	    border: 1px solid #ddd;
+	    border-radius: 8px;
+	    font-size: 18px; 
+	    outline: none;
+	    transition: 0.3s;
+	}
+	     
+        /* Input Field Focus Effect */
+        .form-popup input:focus {
+            border-color: #ff6f61;
+            box-shadow: 0 0 8px rgba(255, 111, 97, 0.5);
         }
 
-        .profile-section p {
-            font-size: 16px;
-            color: #fff;
-            margin: 5px 0;
-        }
-
-        .edit-profile-btn {
-            padding: 8px 16px;
-            font-size: 14px;
-            background-color: #28a745; /* Changed to green for consistency */
-            color: #fff;
+        /* Form Buttons */
+        .form-popup button {
+            width: 48%;
+            padding: 12px;
             border: none;
-            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            font-size: 16px;
+            border-radius: 8px;
+            transition: 0.3s;
         }
 
-        .edit-profile-btn:hover {
-            background-color: #218838; /* Darker green on hover */
+        .form-popup .save-btn {
+            background: #28a745;
+            color: white;
         }
+
+        .form-popup .save-btn:hover {
+            background: #218838;
+        }
+
+        .form-popup .cancel-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .form-popup .cancel-btn:hover {
+            background: #c82333;
+        }
+
     </style>
+
+    <script>
+        function openForm(id, name, email, mobile, password) {
+            if (id) {
+                document.getElementById("formTitle").innerText = "Edit User";
+            } else {
+                document.getElementById("formTitle").innerText = "Add New User";
+            }
+
+            document.getElementById("userId").value = id || '';
+            document.getElementById("name").value = name || '';
+            document.getElementById("email").value = email || '';
+            document.getElementById("mobile").value = mobile || '';
+            document.getElementById("password").value = password || '';
+
+            document.getElementById("userForm").style.display = "block";
+        }
+
+        function closeForm() {
+            document.getElementById("userForm").style.display = "none";
+        }
+        function confirmDelete(userId) {
+            if (confirm("Are you sure you want to delete this user?")) {
+                window.location.href = "deleteUser.jsp?id=" + userId;
+            }
+        }
+
+    </script>
 </head>
 <body>
+
    <jsp:include page="Su.jsp"/>
 
     <div class="content">
-        <div class="header">
-            User Management
-        </div>
+        <div class="header">User Management</div>
 
         <table class="user-table">
             <thead>
@@ -136,36 +224,68 @@
                     <th>User ID</th>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Role</th>
+                    <th>Mobile No.</th>
+                    <th>Password</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
+                <%
+                    String url = "jdbc:mysql://localhost:3306/skill_Elevate";
+                    String user = "root";
+                    String password = "";
+
+                    Connection conn = null;
+                    Statement stmt = null;
+                    ResultSet rs = null;
+
+                    try {
+                        Class.forName("com.mysql.cj.jdbc.Driver");
+                        conn = DriverManager.getConnection(url, user, password);
+                        stmt = conn.createStatement();
+                        String query = "SELECT id, name, email, mobile, password FROM register";
+                        rs = stmt.executeQuery(query);
+
+                        while (rs.next()) {
+                %>
                 <tr>
-                    <td>1</td>
-                    <td>John Doe</td>
-                    <td>johndoe@example.com</td>
-                    <td>Admin</td>
-                    <td><button>Edit</button> <button>Delete</button></td>
+                    <td><%= rs.getInt("id") %></td>
+                    <td><%= rs.getString("name") %></td>      
+                    <td><%= rs.getString("email") %></td>
+                    <td><%= rs.getString("mobile") %></td>
+                    <td><%= rs.getString("password") %></td>
+                    
+                    <td class="action-buttons">
+                        <button class="edit-btn" onclick="openForm('<%= rs.getInt("id") %>', '<%= rs.getString("name") %>', '<%= rs.getString("email") %>', '<%= rs.getString("mobile") %>', '<%= rs.getString("password") %>')">Edit</button>
+                        <button class="delete-btn" onclick="confirmDelete('<%= rs.getInt("id") %>')">Delete</button>
+                    </td>
                 </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Jane Smith</td>
-                    <td>janesmith@example.com</td>
-                    <td>User</td>
-                    <td><button>Edit</button> <button>Delete</button></td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Sam Wilson</td>
-                    <td>samwilson@example.com</td>
-                    <td>Moderator</td>
-                    <td><button>Edit</button> <button>Delete</button></td>
-                </tr>
+                <%
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                %>
             </tbody>
         </table>
 
-        <div class="add-user">Add New User</div>
+        <button class="add-user" onclick="openForm()">Add New User</button>
+
+        <div id="userForm" class="form-popup">
+            <h2 id="formTitle">Add New User</h2>
+            <form action="saveUser.jsp" method="post">
+                <input type="hidden" id="userId" name="id">
+                <input type="text" id="name" name="name" placeholder="Enter Name" required>
+                <input type="email" id="email" name="email" placeholder="Enter Email" required>
+                <input type="text" id="mobile" name="mobile" placeholder="Enter Mobile No." required>
+                <input type="password" id="password" name="password" placeholder="Enter Password" required>
+                <input type="password" id="password" name="conf_password" placeholder="Confirm Password" required>
+                <button type="submit" class="save-btn">Save</button>
+                <button type="button" class="cancel-btn" onclick="closeForm()">Cancel</button>
+            </form>
+        </div>
+
     </div>
+
 </body>
 </html>
