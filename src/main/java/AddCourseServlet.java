@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+
 @WebServlet("/AddCourseServlet")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, maxFileSize = 1024 * 1024 * 10)
 public class AddCourseServlet extends HttpServlet {
@@ -18,13 +19,19 @@ public class AddCourseServlet extends HttpServlet {
         String category = request.getParameter("category");
         String description = request.getParameter("description");
 
+        // Handle "Other" category
+        if ("Other".equals(category)) {
+            String otherCategory = request.getParameter("other_category");
+            if (otherCategory != null && !otherCategory.trim().isEmpty()) {
+                category = otherCategory.trim();
+            }
+        }
+
         Part imagePart = request.getPart("course_image");
         String fileName = System.currentTimeMillis() + "_" + imagePart.getSubmittedFileName();
 
-        // FIXED upload path
+        // Upload path
         String uploadPath = getServletContext().getRealPath("/uploads");
-        System.out.println("Upload path: " + uploadPath);  // Debug line
-
         File uploadDir = new File(uploadPath);
         if (!uploadDir.exists()) uploadDir.mkdirs();
 
@@ -44,11 +51,11 @@ public class AddCourseServlet extends HttpServlet {
             stmt.setString(5, imagePath);
 
             stmt.executeUpdate();
+
             request.setAttribute("success", "true");
             RequestDispatcher dispatcher = request.getRequestDispatcher("Pages/Add_Course.jsp");
             dispatcher.forward(request, response);
 
-            response.sendRedirect("Pages/Add_Course.jsp?success=1");
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("Pages/Add_Course.jsp?error=1");

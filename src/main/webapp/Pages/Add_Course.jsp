@@ -113,19 +113,26 @@
             </div>
             <div class="form-group">
                 <label>Category</label>
-                <select name="category" required>
+                <select name="category" id="category" onchange="handleCategoryChange()" required>
                     <option value="">-- Select Category --</option>
-                    <option value="All">All</option>
                     <option value="Web">Web</option>
                     <option value="Mobile">Mobile</option>
                     <option value="DataScience">DataScience</option>
                     <option value="AIML">AIML</option>
+                    <option value="Other">Other</option>
                 </select>
             </div>
+
+            <div class="form-group" id="otherCategoryGroup" style="display: none;">
+                <label>Enter Category</label>
+                <input type="text" name="other_category" id="otherCategoryInput">
+            </div>
+
             <div class="form-group">
                 <label>Description</label>
                 <textarea name="description" rows="4" required></textarea>
             </div>
+
             <div class="upload-container">
                 <label class="upload-box">
                     <i class="fa fa-upload"></i>
@@ -139,7 +146,6 @@
     </div>
 </div>
 
-<%-- Success message popup if 'success' attribute exists --%>
 <%
     String success = (String) request.getAttribute("success");
     if ("true".equals(success)) {
@@ -151,7 +157,21 @@
     }
 %>
 
+<!-- Script to toggle Other category input -->
 <script>
+function handleCategoryChange() {
+    const categorySelect = document.getElementById("category");
+    const otherCategoryGroup = document.getElementById("otherCategoryGroup");
+
+    if (categorySelect.value === "Other") {
+        otherCategoryGroup.style.display = "block";
+        document.getElementById("otherCategoryInput").required = true;
+    } else {
+        otherCategoryGroup.style.display = "none";
+        document.getElementById("otherCategoryInput").required = false;
+    }
+}
+
 function showFileName(input) {
     const fileName = input.files[0] ? input.files[0].name : "No file chosen";
     document.getElementById("fileName").innerText = fileName;

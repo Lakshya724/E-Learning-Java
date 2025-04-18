@@ -88,7 +88,7 @@
         <h2>Forgot Password</h2>
         <p>Please enter your Gmail to receive a password reset link.</p>
         
-        <form action="<%= request.getContextPath() %>/ForgotPasswordServlet" method="post">
+		<form action="<%=request.getContextPath() %>/ForgotPasswordServlet" method="POST">
             <div class="input-box">
                 <input type="email" name="email" placeholder="Enter your Gmail" required>
             </div>

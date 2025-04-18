@@ -121,7 +121,7 @@
 
         String sql = "SELECT * FROM Courses WHERE category = ?";
         stmt = conn.prepareStatement(sql);
-        stmt.setString(1, "Data Science");
+        stmt.setString(1, "DataScience");
 
         rs = stmt.executeQuery();
 
@@ -136,7 +136,7 @@
         <h3><%= courseName %></h3>
         <p><b><%= professor %></b></p>
         <br>
-        <a href="course-details.jsp?course_id=<%= courseId %>" class="free-badge-link">
+        <a href="DataScienceCourse.jsp?course_id=<%= courseId %>" class="free-badge-link">
             <span class="free-badge">Free Learning</span>
         </a>
     </div>

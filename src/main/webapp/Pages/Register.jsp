@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <style>
+        /* Your original CSS remains unchanged */
         * {
             margin: 0;
             padding: 0;
@@ -100,58 +101,70 @@
             font-weight: bold;
             color: #D4AF65;
         }
+        .error-msg {
+            color: red;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Create a New Account</h2>
-        
-        <form action="<%=request.getContextPath() %>/Registerservlet" method="POST">
-            <div class="input-box">
-                <input type="text" name="name" placeholder=" Name" required>
-            </div>
-           
-            <div class="input-box">
-                <input type="tel" name="mobile" placeholder="Mobile No." pattern="[0-9]{10}" required>
-            </div>
-            <div class="input-box">
-                <input type="email" name="email" placeholder="Email" required>
-            </div>
-            <div class="input-box password-container">
-                <input type="password" name="password" id="password" placeholder="Password" required>
-                <span class="toggle-password" onclick="togglePassword('password', this)">
-                    <i class="fa-solid fa-eye-slash"></i>
-                </span>
-            </div>
-            <div class="input-box password-container">
-                <input type="password" name="conf_password" id="conf_password" placeholder="Confirm Password" required>
-                <span class="toggle-password" onclick="togglePassword('confirmPassword', this)">
-                    <i class="fa-solid fa-eye-slash"></i>
-                </span>
-            </div>
-            <button type="submit">Register</button>
-        </form>
-        
-        <div class="divider"></div>
-        
-        <p class="login-link">Already have an account? <a href="Login.jsp">Login</a></p>
-    </div>
+<div class="container">
+    <h2>Create a New Account</h2>
 
-    <script>
-        function togglePassword(fieldId, iconElement) {
-            var passwordField = document.getElementById(fieldId);
-            var icon = iconElement.querySelector("i");
+    <!-- Error message shown here -->
+    <% 
+        String error = request.getParameter("error");
+        if ("email".equals(error)) {
+    %>
+        <div class="error-msg">Email already exists!</div>
+    <% } %>
 
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                icon.classList.remove("fa-eye-slash");
-                icon.classList.add("fa-eye");
-            } else {
-                passwordField.type = "password";
-                icon.classList.remove("fa-eye");
-                icon.classList.add("fa-eye-slash");
-            }
+    <form action="<%=request.getContextPath()%>/Registerservlet" method="POST">
+        <div class="input-box">
+            <input type="text" name="name" placeholder="Name" required>
+        </div>
+        <div class="input-box">
+            <input type="tel" name="mobile" placeholder="Mobile No." pattern="[0-9]{10}" required>
+        </div>
+        <div class="input-box">
+            <input type="email" name="email" placeholder="Email" required>
+        </div>
+        <div class="input-box password-container">
+            <input type="password" name="password" id="password" placeholder="Password" required>
+            <span class="toggle-password" onclick="togglePassword('password', this)">
+                <i class="fa-solid fa-eye-slash"></i>
+            </span>
+        </div>
+        <div class="input-box password-container">
+            <input type="password" name="conf_password" id="conf_password" placeholder="Confirm Password" required>
+            <span class="toggle-password" onclick="togglePassword('conf_password', this)">
+                <i class="fa-solid fa-eye-slash"></i>
+            </span>
+        </div>
+        <button type="submit">Register</button>
+    </form>
+
+    <div class="divider"></div>
+
+    <p class="login-link">Already have an account? <a href="Login.jsp">Login</a></p>
+</div>
+
+<script>
+    function togglePassword(fieldId, iconElement) {
+        var passwordField = document.getElementById(fieldId);
+        var icon = iconElement.querySelector("i");
+
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        } else {
+            passwordField.type = "password";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
         }
-    </script>
+    }
+</script>
 </body>
 </html>

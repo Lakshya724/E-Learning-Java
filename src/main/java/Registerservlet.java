@@ -1,5 +1,4 @@
-
-import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletException; 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,20 +8,18 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-
+import java.sql.ResultSet;
 
 @WebServlet("/Registerservlet")
 public class Registerservlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
+    public Registerservlet() {
+        super();
+    }
 
-	public Registerservlet() {
-		super();
-	}
-
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		PrintWriter out = response.getWriter();
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
         response.setContentType("text/html");
 
         String myname = request.getParameter("name");
@@ -32,14 +29,22 @@ public class Registerservlet extends HttpServlet {
         String myconf_password = request.getParameter("conf_password");
 
         try {
-            // Load MySQL JDBC driver
             Class.forName("com.mysql.cj.jdbc.Driver");
-
-            // Establish connection
             Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/skill_Elevate", "root", "");
 
-            // Prepare SQL query
-            PreparedStatement ps = con.prepareStatement("INSERT INTO `register` (name, mobile, email, password, conf_password) VALUES (?, ?, ?,?,?)");
+            // Check if email already exists
+            PreparedStatement checkEmail = con.prepareStatement("SELECT * FROM register WHERE email = ?");
+            checkEmail.setString(1, myemail);
+            ResultSet rs = checkEmail.executeQuery();
+
+            if (rs.next()) {
+                // Email exists, redirect with error message
+                response.sendRedirect("Pages/Register.jsp?error=email");
+                return;
+            }
+
+            // Email doesn't exist, continue registration
+            PreparedStatement ps = con.prepareStatement("INSERT INTO register (name, mobile, email, password, conf_password) VALUES (?, ?, ?, ?, ?)");
             ps.setString(1, myname);
             ps.setString(2, mymobile);
             ps.setString(3, myemail);
@@ -49,7 +54,6 @@ public class Registerservlet extends HttpServlet {
             int count = ps.executeUpdate();
 
             if (count > 0) {
-                // Successful registration message
                 out.println("<html><head>");
                 out.println("<style>");
                 out.println("body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f0f8ff; font-family: Arial, sans-serif; }");
@@ -65,7 +69,6 @@ public class Registerservlet extends HttpServlet {
                 out.println("</div>");
                 out.println("</body></html>");
             } else {
-                // Registration failed
                 out.println("<html><head>");
                 out.println("<style>");
                 out.println("body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f8d7da; font-family: Arial, sans-serif; }");
@@ -82,8 +85,11 @@ public class Registerservlet extends HttpServlet {
                 out.println("</body></html>");
             }
 
+            rs.close();
+            checkEmail.close();
             ps.close();
             con.close();
+
         } catch (Exception e) {
             e.printStackTrace();
             out.println("<html><head>");

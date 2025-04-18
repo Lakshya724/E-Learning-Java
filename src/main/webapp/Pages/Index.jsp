@@ -416,11 +416,10 @@
         <div class="hero-content">
             <h1>Let's Learn to build a Website for your business</h1>
             <p>Join the best platform for web development courses and expert guidance.</p>
-          <a href="course.jsp">  <button class="btn-primary">Get Started</button>
+          <a href="Select.jsp">  <button class="btn-primary">Get Started</button>
              </a>
              
-            <a href="Login.jsp" ><button class="btn-secondary">Sign In</button></a>
-         
+
         </div>
         <div class="hero-image">
             <img src="Images/hero.png" alt="Hero Image" style="width: 300px; height: auto;">

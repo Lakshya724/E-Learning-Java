@@ -136,7 +136,7 @@
         <h3><%= courseName %></h3>
         <p><b><%= professor %></b></p>
         <br>
-        <a href="course-details.jsp?course_id=<%= courseId %>" class="free-badge-link">
+        <a href="Mobilecourse.jsp?course_id=<%= courseId %>" class="free-badge-link">
             <span class="free-badge">Free Learning</span>
         </a>
     </div>

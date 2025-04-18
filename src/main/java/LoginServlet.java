@@ -51,14 +51,14 @@ public class LoginServlet extends HttpServlet {
 					// ✅ Session Set
 					HttpSession session = request.getSession();
 					session.setAttribute("username", email);
-					session.setMaxInactiveInterval(15 * 60); // 30 min session timeout
+					session.setMaxInactiveInterval(1 * 60); 
 
 					// ✅ Cookie Set
 					Cookie userCookie = new Cookie("user", email);
-					userCookie.setMaxAge(60 * 60 * 24 * 7); // 7 days
+					userCookie.setMaxAge(60 * 60 * 24 * 7); 
 					response.addCookie(userCookie);
 
-					response.sendRedirect("Pages/Index.jsp"); // ✅ Redirect to Home
+					response.sendRedirect("Pages/Index.jsp"); 
 				} else {
 					response.sendRedirect("Pages/Login.jsp?error=Invalid email or password");
 				}

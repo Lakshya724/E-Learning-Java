@@ -157,6 +157,27 @@
             color: var(--error-color);
             border: 1px solid rgba(255, 51, 51, 0.2);
         }
+           
+        .divider {
+            margin: 1.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .back-link {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+        
+        .back-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-link a:hover {
+            text-decoration: underline;
+        }
         
         @media (max-width: 768px) {
             .profile-container {
@@ -213,6 +234,10 @@
             </div>
 
             <button type="submit" class="btn">Update Profile</button>
+                <div class="divider"></div>
+        
+        <p class="back-link">Back to <a href="Index.jsp">Home</a></p>
+    </div>
         </form>
     </div>
 </body>

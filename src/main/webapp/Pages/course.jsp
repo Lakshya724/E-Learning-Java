@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <title>Skill_Elevate - All Courses</title>
     <style>
+        /* [Same existing CSS styles — unchanged] */
         * {
             margin: 0;
             padding: 0;
@@ -77,6 +78,7 @@
             border-radius: 5px;
             font-size: 14px;
             margin-top: 5px;
+            text-decoration: none;
         }
 
         /* SERVICES SECTION */
@@ -180,16 +182,26 @@
             String imagePath = rs.getString("image_path");
             String courseName = rs.getString("course_name");
             String professor = rs.getString("professor_name");
+            String category = rs.getString("category");
             int courseId = rs.getInt("course_id");
+
+            String targetPage = "course-details.jsp";
+            if ("Web Development".equalsIgnoreCase(category)) {
+                targetPage = "course-details.jsp";
+            } else if ("Mobile".equalsIgnoreCase(category)) {
+                targetPage = "Mobilecourse.jsp";
+            } else if ("AIML".equalsIgnoreCase(category)) {
+                targetPage = "AIMLCourse.jsp";
+            } else if ("DataScience".equalsIgnoreCase(category)) {
+                targetPage = "DataScienceCourse.jsp";
+            }
 %>
     <div class="course-card">
         <img src="<%= request.getContextPath() + "/" + imagePath %>" alt="Course Image">
         <h3><%= courseName %></h3>
         <p><b><%= professor %></b></p>
         <br>
-        <a href="course-details.jsp?course_id=<%= courseId %>" class="free-badge-link">
-            <span class="free-badge">Free Learning</span>
-        </a>
+        <a href="<%= targetPage %>?id=<%= courseId %>" class="free-badge">Free Learning</a>
     </div>
 <%
         }

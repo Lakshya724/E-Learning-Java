@@ -19,7 +19,7 @@
 
             int rowsDeleted = pstmt.executeUpdate();
             if (rowsDeleted > 0) {
-                response.sendRedirect("user_management.jsp"); // Redirect back to user list
+                response.sendRedirect("user_management.jsp"); 
             } else {
                 out.println("<script>alert('User not found or could not be deleted.'); window.location='usermanagement.jsp';</script>");
             }

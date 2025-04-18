@@ -1,50 +1,60 @@
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 @WebServlet("/ResetPasswordServlet")
 public class ResetPasswordServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
-        String email = request.getParameter("email");
-        String otp = request.getParameter("otp");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String resetToken = request.getParameter("token");
         String newPassword = request.getParameter("newPassword");
-        String confirmPassword = request.getParameter("confirmPassword");
 
-        if (!newPassword.equals(confirmPassword)) {
-            response.sendRedirect("ResetPassword.jsp?email=" + email + "&error=Passwords do not match!");
-            return;
+        // Validate the reset token
+        if (isValidResetToken(resetToken)) {
+            updatePassword(resetToken, newPassword);
+            response.sendRedirect("login.jsp?reset=success");
+        } else {
+            response.sendRedirect("reset-password.jsp?error=invalid-token");
         }
+    }
 
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
+    private boolean isValidResetToken(String resetToken) {
+        boolean isValid = false;
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/skill_Elevate", "root", "");
-
-            // Check OTP
-            String checkQuery = "SELECT conf_password FROM register WHERE email=?";
-            stmt = conn.prepareStatement(checkQuery);
-            stmt.setString(1, email);
-            rs = stmt.executeQuery();
-
-            if (rs.next() && rs.getString("conf_password").equals(otp)) {
-                // ✅ Update password
-                String updateQuery = "UPDATE register SET password=?, conf_password='' WHERE email=?";
-                stmt = conn.prepareStatement(updateQuery);
-                stmt.setString(1, newPassword);
-                stmt.setString(2, email);
-                stmt.executeUpdate();
-
-                response.sendRedirect("Login.jsp?success=Password changed successfully!");
-            } else {
-                response.sendRedirect("ResetPassword.jsp?email=" + email + "&error=Invalid OTP!");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/skill_Elevate", "root", "");
+            String sql = "SELECT COUNT(*) FROM users WHERE reset_token = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, resetToken);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                isValid = true;
             }
-
-        } catch (Exception e) {
+            conn.close();
+        } catch (SQLException e) {
             e.printStackTrace();
-            response.sendRedirect("ResetPassword.jsp?error=Database error!");
+        }
+        return isValid;
+    }
+
+    private void updatePassword(String resetToken, String newPassword) {
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/skill_Elevate", "root", "");
+            String sql = "UPDATE users SET password = ? WHERE reset_token = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, newPassword);  // Ideally, hash the password before storing
+            stmt.setString(2, resetToken);
+            stmt.executeUpdate();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

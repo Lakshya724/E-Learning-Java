@@ -81,7 +81,7 @@
         <!-- Right Side: Contact Form -->
         <div class="col-md-7">
             <div class="form-container">
-                <form action="ContactServlet" method="post">
+                <form action="<%=request.getContextPath() %>/ContactServlet" method="post">
                     <div class="mb-3">
                         <label class="form-label">Name</label>
                         <input type="text" name="name" class="form-control" placeholder="Enter your name" required>
